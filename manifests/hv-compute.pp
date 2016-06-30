@@ -1,4 +1,4 @@
-#
+# HyperV Node definition
 node /^hv-compute[0-9]+\.openstack\.tld$/{
   case $kernel {
     'Windows':{
@@ -10,10 +10,10 @@ node /^hv-compute[0-9]+\.openstack\.tld$/{
       class {'windows_common::configuration::disable_firewalls':}
       class {'windows_common::configuration::disable_auto_update':}
       class {'windows_common::configuration::enable_iscsi_initiator':}
-#      class {'windows_common::configuration::ntp':
- #       before => Class['windows_openssl'],
- #     }
-#      class {'windows_common::configuration::rdp':}
+      class {'windows_common::configuration::ntp':
+        before => Class['windows_openssl'],
+      }
+      class {'windows_common::configuration::rdp':}
       class {'windows_openssl': }
       class {'java': distribution => 'jre' }
 
@@ -25,8 +25,7 @@ node /^hv-compute[0-9]+\.openstack\.tld$/{
       }
 
       #class {'windows_freerdp': }
-
-      class {'windows_git': before => Class['cloudbase_prep'],}
+      #class {'windows_git': before => Class['cloudbase_prep'],}
       class {'cloudbase_prep': }
       class {'jenkins::slave':
         install_java      => false,
@@ -36,33 +35,8 @@ node /^hv-compute[0-9]+\.openstack\.tld$/{
         labels            => 'hv-staging',
         masterurl         => 'http://jenkins.openstack.tld:8080',
       }
-      #if !defined (Windows_python::Dependency['PyYAML']){
-      #  windows_python::dependency{ 'PyYAML':
-      #    type    => pip,
-      #    require => Class['cloudbase_prep'],
-      #  }
-      #}
-
-#      $q_ip = '10.21.7.22'
-#      $nfs_location = "\\\\${q_ip}\\nfs"
-#      file { "${nfs_location}":
-#        ensure => directory,
-#      }
-#      file { "${nfs_location}\\facter":
-#        ensure => directory,
-#        require => File["$nfs_location"],
-#      }
-#      exec {"${hostname}-facter":
-#        command => "\"C:\\Program Files (x86)\\Puppet Labs\\Puppet\\bin\\facter.bat\" -py > C:\\ProgramData\\facter.yaml",
-#      }
-#      file { "${nfs_location}\\facter\\${hostname}.yaml":
-#        ensure  => file,
-#        source  => 'C:\ProgramData\facter.yaml',
-#        require => File["${nfs_location}\\facter"],
-#        subscribe => Exec["${hostname}-facter"],
-#      }
-
     }
+
     default:{
       notify{"${kernel} on ${fqdn} doesn't belong here":}
     }
@@ -71,9 +45,9 @@ node /^hv-compute[0-9]+\.openstack\.tld$/{
 }
 
 # Limit production nodes to explicitly defined machines.
-node 
+node
 
-     
+
      'c2-r1-u01.openstack.tld',
      'c2-r1-u01.ad.openstack.tld',
      'c2-r1-u02.openstack.tld',
@@ -82,12 +56,13 @@ node
      'c2-r1-u04.openstack.tld',
      'c2-r1-u05.openstack.tld',
      'c2-r1-u06.openstack.tld',
-     'c2-r1-u07.openstack.tld', ## Fails to respond to WSMan -- Timeout
-     'c2-r1-u08.openstack.tld', ## Fails to respond to WSMan -- Timeout
-     'c2-r1-u09.openstack.tld', ## Fails to respond to WSMan -- Timeout
-     'c2-r1-u10.openstack.tld', ## Fails to respond to WSMan -- Timeout
-     'c2-r1-u11.openstack.tld', ## errors on node, requires review/reconfig > "In review, 2015-03-17"-Tim
+     'c2-r1-u07.openstack.tld',
+     'c2-r1-u08.openstack.tld',
+     'c2-r1-u09.openstack.tld',
+     'c2-r1-u10.openstack.tld',
+     'c2-r1-u11.openstack.tld',
      'c2-r1-u12.openstack.tld',
+     'c2-r1-u12.ad.openstack.tld',
      'c2-r1-u13.openstack.tld',
      'c2-r1-u14.openstack.tld',
      'c2-r1-u15.openstack.tld',
@@ -111,8 +86,11 @@ node
 #     'c2-r1-u34.openstack.tld',
      'c2-r1-u36.openstack.tld',
      'c2-r1-u40.openstack.tld',
+
+# Rack 2
      'c2-r2-u02.openstack.tld',
      'c2-r2-u03.openstack.tld',
+     'c2-r2-u03.ad.openstack.tld',
      'c2-r2-u04.openstack.tld',
      'c2-r2-u05.openstack.tld',
      'c2-r2-u06.openstack.tld',
@@ -133,9 +111,10 @@ node
      'c2-r2-u21.openstack.tld',
      'c2-r2-u22.openstack.tld',
      'c2-r2-u23.openstack.tld',
-     'c2-r2-u24.openstack.tld', 
+     'c2-r2-u24.openstack.tld',
      'c2-r2-u25.openstack.tld',
      'c2-r2-u26.openstack.tld',
+     'c2-r2-u26.ad.openstack.tld',
      'c2-r2-u27.ad.openstack.tld',
      'c2-r2-u27.openstack.tld',
      'c2-r2-u28.ad.openstack.tld',
@@ -144,6 +123,7 @@ node
      'c2-r2-u33.ad.openstack.tld',
      'c2-r2-u35.ad.openstack.tld',
      'c2-r2-u36.ad.openstack.tld',
+     'c2-r2-u37.openstack.tld',
      'c2-r2-u37.ad.openstack.tld',
      'c2-r2-u38.openstack.tld', ## errors on node, requires review/reconfig
      'c2-r2-u39.ad.openstack.tld',
@@ -264,7 +244,7 @@ node
      'c2-r15-u35.ad.openstack.tld',
      'c2-r15-u36.openstack.tld',
      'c2-r15-u36.ad.openstack.tld',
-    
+
 # rack 17
      'c2-r17-u01.openstack.tld',
      'c2-r17-u01.ad.openstack.tld',
@@ -333,8 +313,11 @@ node
      'c2-r17-u32.ad.openstack.tld'
 
 {
+
   case $kernel {
     'Windows':{
+  # Set's the Environment from production to staging so we can use the openstack-hyper-v jenkins fork with windows enablement
+      environment = staging
       File {
         source_permissions => ignore,
       }
@@ -343,10 +326,10 @@ node
       class {'windows_common::configuration::disable_firewalls':}
       class {'windows_common::configuration::disable_auto_update':}
       class {'windows_common::configuration::enable_iscsi_initiator':}
-#      class {'windows_common::configuration::ntp':
- #       before => Class['windows_openssl'],
- #     }
-    #  class {'windows_common::configuration::rdp':}
+     # class {'windows_common::configuration::ntp':
+     #   before => Class['windows_openssl'],
+     # }
+     #class {'windows_common::configuration::rdp':}
       class {'windows_openssl': }
       class {'java': distribution => 'jre' }
 
@@ -357,57 +340,22 @@ node
         interface_address => '10.0.*',
       }
 
-      class {'windows_git': before => Class['cloudbase_prep'],}
-      
+      #class {'windows_git': before => Class['cloudbase_prep'],}
       class {'cloudbase_prep': }
       class {'windows_freerdp': }
 
-#      $python_logging_file = 'c:/Python27/Lib/logging/__init__.py'
-#      if (!defined(File[$python_logging_file])) {
-#        file {$python_logging_file:
-#          ensure  => present,
-#          require => Class['cloudbase_prep'],
-#        }
-#      }
-#
-#      exec {'fix_python_logging_threading':
-#        provider => powershell,
-#        command  => "
-#          \$newcontent = ((([IO.File]::ReadAllText('${python_logging_file}')) -creplace '(except ImportError:[\\n\\s]+thread = None)([\\n\\s]+?)(\\r\\n)(?:from eventlet import patcher[\\n\\s]+thread = patcher.original(''thread'')[\\n\\s]+threading = patcher.original(''threading'')[\\n\\s]+)?__author__','\$1\$2\$3from eventlet import patcher\$3thread = patcher.original(''thread'')\$3threading = patcher.original(''threading'')\$2\$3__author__') -creplace 'test-Tim','')
-#          [IO.File]::WriteAllText('${python_logging_file}',\$newcontent)
-#        ",
-#        require => File[$python_logging_file],
-#      }
-      
-      class {'jenkins::slave': 
+
+      class {'jenkins::slave':
         install_java      => false,
         require           => [Class['java'],Class['cloudbase_prep']],
         manage_slave_user => false,
         executors         => 1,
 #        labels            => $jenkins_label,
 #        masterurl         => 'http://jenkins.openstack.tld:8080',
-        labels            => $jenkins_label,
-        masterurl         => $jenkins_host,
+        labels            => "almost-ready",
+        masterurl         => "http://jenkins.openstack.tld:8080",
       }
 
-#      $q_ip = '10.21.7.22'
-#      $nfs_location = "\\\\${q_ip}\\nfs"
-#      file { "${nfs_location}":
-#        ensure => directory,
-#      }
-#      file { "${nfs_location}\\facter":
-#        ensure => directory,
-#        require => File["$nfs_location"],
-#      }
-#      exec {"${hostname}-facter":
-#        command => "\"C:\\Program Files (x86)\\Puppet Labs\\Puppet\\bin\\facter.bat\" -py > C:\\ProgramData\\facter.yaml",
-#      }
-#      file { "${nfs_location}\\facter\\${hostname}.yaml":
-#        ensure  => file,
-#        source  => 'C:\ProgramData\facter.yaml',
-#        require => File["${nfs_location}\\facter"],
-#        subscribe => Exec["${hostname}-facter"],
-#      }
 
     }
     'Linux':{
